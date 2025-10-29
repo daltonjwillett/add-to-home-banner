@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add to Home Screen Instructions</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+    }
+    
+    #banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+      border: 2px solid rgba(255,255,255,0.2);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .icon {
+      background: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    
+    .icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: #667eea;
+      stroke-width: 2;
+      fill: none;
+    }
+    
+    h2 {
+      color: white;
+      font-size: 24px;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+    
+    p {
+      color: rgba(255,255,255,0.95);
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    button {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    
+    .primary-btn {
+      background: white;
+      color: #667eea;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .primary-btn:hover {
+      transform: scale(1.05);
+    }
+    
+    .secondary-btn {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .secondary-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    /* Mobile-only visibility */
+    @media (min-width: 768px) {
+      #banner {
+        display: none;
+      }
+      #desktop-message {
+        display: block !important;
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+      }
+    }
+    
+    #desktop-message {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="desktop-message">
+    <p style="font-size: 18px;">This message is only visible on mobile devices</p>
+  </div>
+
+  <div id="banner">
+    <div class="icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </div>
+    <h2>Add to Home Screen</h2>
+    <p>Get quick access to the Power Simulator! Add this page to your home screen for a fullscreen app experience.</p>
+    
+    <div class="buttons">
+      <button class="primary-btn" onclick="showInstructions()">Show Me How</button>
+      <button class="secondary-btn" onclick="dismiss()">Maybe Later</button>
+    </div>
+  </div>
+
+  <script>
+    // Check if running in standalone mode (already added to home screen)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    
+    // Check if previously dismissed
+    const isDismissed = localStorage.getItem('banner-dismissed') === 'true';
+    
+    // Hide banner if in standalone mode or dismissed
+    if (isStandalone || isDismissed) {
+      document.getElementById('banner').classList.add('hidden');
+    }
+    
+    function showInstructions() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      
+      if (isIOS) {
+        alert(
+          'Add to Home Screen (iOS):\n\n' +
+          '1. Tap the Share button at the bottom of Safari\n\n' +
+          '2. Scroll down and tap "Add to Home Screen"\n\n' +
+          '3. Tap "Add" in the top right corner\n\n' +
+          '4. Launch the app from your home screen!\n\n' +
+          'You will get a fullscreen experience!'
+        );
+      } else {
+        alert(
+          'Add to Home Screen (Android):\n\n' +
+          '1. Tap the menu button in your browser\n\n' +
+          '2. Select "Add to Home screen" or "Install app"\n\n' +
+          '3. Tap "Add" or "Install"\n\n' +
+          '4. Launch the app from your home screen!\n\n' +
+          'You will get a fullscreen experience!'
+        );
+      }
+    }
+    
+    function dismiss() {
+      document.getElementById('banner').classList.add('hidden');
+      localStorage.setItem('banner-dismissed', 'true');
+      
+      // Tell parent frame we're dismissed (for SharePoint embedding)
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'banner-dismissed' }, '*');
+      }
+    }
+  </script>
+</body>
+</html>
